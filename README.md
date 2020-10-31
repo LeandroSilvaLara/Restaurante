@@ -94,5 +94,19 @@ $ npm start
 
 ```
 
+# :man: Autor
 
+<img  border-radius="50px" src="https://user-images.githubusercontent.com/49800137/97786310-6c842080-1b89-11eb-8584-0bb77c50d700.jpg" width="100px" alt="Leandro Lara"/>
+
+[![Linkedin Badge](https://img.shields.io/badge/-Leandro-blue?style=flat-square&logo=Linkedin&logoColor=white&link=https://www.linkedin.com/in/leandro-lara-209445a9/)](https://www.linkedin.com/in/leandro-lara-209445a9/) 
+[![Gmail Badge](https://img.shields.io/badge/-leandroshinigami@gmail.com-c14438?style=flat-square&logo=Gmail&logoColor=white&link=leandroshinigami@gmail.com)](leandroshinigami@gmail.com)
+
+---
+
+# :closed_book: License
+
+This project is under the [MIT](./LICENSE).
+
+
+Made with love by [Leandro Lara](https://github.com/LeandroSilvaLara) 💜🚀
 
