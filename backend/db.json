@@ -1,0 +1,47 @@
+{
+  "users": [
+    {
+      "id": 2,
+      "name": "Leandro Lara",
+      "email": "leandro@gmail.com"
+    },
+    {
+      "name": "lucas",
+      "email": "lucas@gmail.com",
+      "id": 3
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "nome": "feijão",
+      "quantity": 6,
+      "metrica": "24Kg ",
+      "marca": "Urbano"
+    },
+    {
+      "nome": "Arroz",
+      "quantity": 3,
+      "marca": "Tio João",
+      "metrica": "30Kg",
+      "id": 2
+    },
+    {
+      "nome": "Doce de leite",
+      "quantity": 1,
+      "price": null,
+      "marca": "Vimik",
+      "metrica": 80,
+      "id": 3
+    }
+  ],
+  "compras": [
+    {
+      "id_user": 1,
+      "id_product": 1,
+      "quantity": 6,
+      "price": 6.58,
+      "id": 1
+    }
+  ]
+}

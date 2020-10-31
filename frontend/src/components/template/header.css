@@ -1,0 +1,10 @@
+header.header{
+    background-color: white;
+    padding: 0px 15px;
+    overflow: hidden;/*n sofre alteração caso o conteúdo ultrapasse o espaço definido*/
+    white-space: nowrap;/*evita-se que textos quebrem*/
+    box-shadow: var(--shadow);
+}
+header.header h1{
+    font-size: 1.8em;
+}
