@@ -1,47 +1,81 @@
 {
   "users": [
     {
-      "id": 2,
+      "id": 1,
       "name": "Leandro Lara",
-      "email": "leandro@gmail.com"
+      "email": "leandro@cod3r.com.br"
     },
     {
-      "name": "lucas",
-      "email": "lucas@gmail.com",
-      "id": 3
+      "id": 2,
+      "name": "Maria Julia da Silva",
+      "email": "mjds@empresa.com"
     }
   ],
   "products": [
     {
-      "id": 1,
-      "nome": "feijão",
-      "quantity": 6,
-      "metrica": "24Kg ",
-      "marca": "Urbano"
+      "id": 3,
+      "nome": "Paçoca",
+      "quantity": 3558,
+      "price": 0.99,
+      "metrica": "15g"
+    },
+    {
+      "nome": "café da manha",
+      "quantity": 0,
+      "price": 15,
+      "metrica": "10g",
+      "id": 4
+    },
+    {
+      "nome": "Feijão",
+      "quantity": 100,
+      "price": 7,
+      "metrica": "1kg",
+      "id": 5
     },
     {
       "nome": "Arroz",
-      "quantity": 3,
-      "marca": "Tio João",
-      "metrica": "30Kg",
-      "id": 2
+      "quantity": 100,
+      "price": 26,
+      "metrica": "5kg",
+      "id": 6
     },
     {
-      "nome": "Doce de leite",
-      "quantity": 1,
-      "price": null,
-      "marca": "Vimik",
-      "metrica": 80,
-      "id": 3
+      "nome": "Filé de peito",
+      "quantity": 38,
+      "price": 9.26,
+      "metrica": "2,5kg",
+      "id": 7
+    },
+    {
+      "nome": "Luinça ",
+      "quantity": 70,
+      "price": 15,
+      "metrica": "1,5kg",
+      "id": 8
+    },
+    {
+      "nome": "Macarrão",
+      "quantity": 30,
+      "price": 4.25,
+      "metrica": "3kg",
+      "id": 9
     }
   ],
   "compras": [
     {
       "id_user": 1,
-      "id_product": 1,
-      "quantity": 6,
-      "price": 6.58,
-      "id": 1
+      "id_product": 4,
+      "quantity": 1,
+      "price": 15,
+      "id": 2
+    },
+    {
+      "id_product": 7,
+      "id_user": 1,
+      "quantity": 12,
+      "price": 111.12,
+      "id": 3
     }
   ]
 }

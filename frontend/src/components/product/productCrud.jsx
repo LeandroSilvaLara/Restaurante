@@ -2,9 +2,6 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Main from '../template/main';
 
-
-
-
 const headerProps = {
   icon: 'product-hunt',
   title: 'Produtos',
@@ -14,11 +11,11 @@ const headerProps = {
 const baseUrl = 'http://localhost:3001/products';
 
 const initialState = {
-  product: { nome: '', quantity: '', metrica: '', marca: '' },
+  product: { nome: '', quantity: '', price: '', metrica: '' },
   list: []
 };
 
-export default class productCrud extends Component {
+export default class ProductCrud extends Component {
   state = { ...initialState };
 
   componentWillMount() {
@@ -34,7 +31,7 @@ export default class productCrud extends Component {
   save() {
     const product = this.state.product;
     product.quantity = parseInt(product.quantity, 10);
-    product.metrica = parseFloat(product.metrica.toString().replace(',', '.'));
+    product.price = parseFloat(product.price.toString().replace(',', '.'));
     const method = product.id ? 'put' : 'post';
     const url = product.id ? `${baseUrl}/${product.id}` : baseUrl;
     axios[method](url, product).then(resp => {
@@ -61,14 +58,14 @@ export default class productCrud extends Component {
         <div className="row">
           <div className="col-12 col-md-6">
             <div className="form-group">
-              <label>Nome</label>
+              <label>Descrição</label>
               <input
                 type="text"
                 className="form-control"
                 name="nome"
                 value={this.state.product.nome}
                 onChange={e => this.updateField(e)}
-                placeholder="Digite o Nome..."
+                placeholder="Digite a descrição..."
               />
             </div>
           </div>
@@ -87,32 +84,30 @@ export default class productCrud extends Component {
             </div>
           </div>
 
-        
-
           <div className="col-12 col-md-6">
             <div className="form-group">
-              <label>Metrica(kg ou ml)</label>
+              <label>Preço</label>
               <input
                 type="text"
                 className="form-control"
-                name="metrica"
-                value={this.state.product.metrica}
+                name="price"
+                value={this.state.product.price}
                 onChange={e => this.updateField(e)}
-                placeholder="Digite o metrica..."
+                placeholder="Digite o preço..."
               />
             </div>
           </div>
 
           <div className="col-12 col-md-6">
             <div className="form-group">
-              <label>Marca</label>
+              <label>metrica</label>
               <input
                 type="text"
                 className="form-control"
-                name="marca"
-                value={this.state.product.marca}
+                name="metrica"
+                value={this.state.product.metrica}
                 onChange={e => this.updateField(e)}
-                placeholder="Digite a marca..."
+                placeholder="Digite a metrica..."
               />
             </div>
           </div>
@@ -154,10 +149,10 @@ export default class productCrud extends Component {
         <thead>
           <tr>
             <th>ID</th>
-            <th>Nome</th>
+            <th>Descrição</th>
             <th>Quantidade</th>
-            <th>Metrica</th>
-            <th>Marca</th>
+            <th>Preço</th>
+            <th>metrica</th>
             <th>Ações</th>
           </tr>
         </thead>
@@ -174,12 +169,12 @@ export default class productCrud extends Component {
           <td>{product.nome}</td>
           <td>{product.quantity}</td>
           <td>
-
-            {parseFloat(product.metrica)
+            R${' '}
+            {parseFloat(product.price)
               .toFixed(2)
               .replace('.', ',')}
           </td>
-          <td>{product.marca}</td>
+          <td>{product.metrica}</td>
           <td>
             <button
               className="btn btn-warning"

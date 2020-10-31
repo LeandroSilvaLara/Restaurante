@@ -1,5 +1,10 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import { toast } from 'react-toastify';
+
+
+import './styles.css';
+
 import Main from '../template/main';
 
 const headerProps = {
@@ -10,11 +15,15 @@ const headerProps = {
 
 const baseUrl = 'http://localhost:3001/compras';
 const urlUsuario = 'http://localhost:3001/users';
+const urlProduto = 'http://localhost:3001/products';
 
 const initialState = {
-  compra: { id_user: 1, id_product: 0, quantity: '', price: '' },
+  compra: { id_user: '', id_product: '', quantity: 1, price: 0 },
   list: [],
-  users: []
+  users: [],
+  products: [],
+  qtdError: '',
+  loading: false
 };
 
 export default class Compras extends Component {
@@ -25,29 +34,67 @@ export default class Compras extends Component {
       this.setState({ list: resp.data });
     });
 
-    axios(baseUrlUsers).then(resp => {
-      this.setState ({ 
-          listUsers:resp.data,
-          compra: { 
-              ... this.state.compra, 
-              
-          }
-      })
-    })
+    axios(urlUsuario).then(resp => {
+      this.setState({
+        users: resp.data,
+        compra: {
+          ...this.state.compra,
+          id_user: resp.data[0].id
+        }
+      });
+    });
+
+    axios(urlProduto).then(resp => {
+      this.setState({
+        products: resp.data,
+        compra: {
+          ...this.state.compra,
+          id_product: resp.data[0].id
+        }
+      });
+      this.validateQtd();
+    });
   }
 
-  clear() {
-    this.setState({ compra: initialState.compra });
+  async clear() {
+    await this.setState({
+      compra: {
+        id_product: this.state.products[0].id,
+        id_user: this.state.users[0].id,
+        quantity: 1,
+        price: 0
+      }
+    });
+    this.validateQtd();
   }
 
-  save() {
+  async save() {
+    this.setState({ loading: true });
     const compra = this.state.compra;
     const method = compra.id ? 'put' : 'post';
     const url = compra.id ? `${baseUrl}/${compra.id}` : baseUrl;
     axios[method](url, compra).then(resp => {
       const list = this.getUpdatedList(resp.data);
-      this.setState({ compra: initialState.compra, list });
+      this.setState({
+        list,
+        loading: false
+      });
+      this.clear();
+      toast.success('Salvo com sucesso!');
     });
+    if (method === 'post') {
+      const product = await this.state.products.find(
+        p => p.id === compra.id_product
+      );
+      product.quantity -= compra.quantity;
+      axios.patch(`${urlProduto}/${compra.id_product}`, {
+        quantity: product.quantity
+      });
+      let products = this.state.products;
+      const position = products.findIndex(p => p.id === compra.id_product);
+      products[position] = product;
+      this.setState({ products });
+    }
   }
 
   getUpdatedList(compra, add = true) {
@@ -56,10 +103,32 @@ export default class Compras extends Component {
     return list;
   }
 
-  updateField(event) {
+  async updateField(event) {
     const compra = { ...this.state.compra };
-    compra[event.target.name] = event.target.value;
-    this.setState({ compra });
+    compra[event.target.name] = parseInt(event.target.value, 10)
+      ? parseInt(event.target.value, 10)
+      : event.target.value;
+    await this.setState({ compra });
+    this.validateQtd();
+  }
+
+  validateQtd() {
+    const product = this.state.products.find(
+      p => p.id === parseInt(this.state.compra.id_product, 10)
+    );
+    if (this.state.compra.quantity > product.quantity) {
+      this.setState({ qtdError: 'Quantidade fora de estoque.' });
+    } else {
+      let price = product.price * this.state.compra.quantity;
+      price = parseFloat(price.toFixed(2));
+      this.setState({
+        qtdError: '',
+        compra: {
+          ...this.state.compra,
+          price
+        }
+      });
+    }
   }
 
   renderForm() {
@@ -75,46 +144,98 @@ export default class Compras extends Component {
                 value={this.state.compra.id_user}
                 onChange={e => this.updateField(e)}
               >
-                {
-                  this.state.users.map(user => {
-                    return <option value={user.id}>{user.name}</option>
-                  })
-                }
+                {this.state.users.map(user => {
+                  return (
+                    <option key={user.id} value={user.id}>
+                      {user.name}
+                    </option>
+                  );
+                })}
               </select>
+            </div>
+          </div>
+
+          <div className="col-12 col-md-6">
+            <div className="form-group">
+              <label>Produto</label>
+              <select
+                name="id_product"
+                className="form-control"
+                value={this.state.compra.id_product}
+                onChange={e => this.updateField(e)}
+              >
+                {this.state.products.map(product => {
+                  return (
+                    <option key={product.id} value={product.id}>
+                      {product.nome}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+          </div>
+
+          <div className="col-12 col-md-6">
+            <div className="form-group">
+              <label
+                htmlFor="qtde"
+                className={this.state.qtdError ? 'text-danger' : ''}
+              >
+                Quantidade
+              </label>
+              <input
+                id="qtde"
+                name="quantity"
+                type="number"
+                min="1"
+                step="1"
+                className={
+                  'form-control' + (this.state.qtdError ? ' is-invalid' : '')
+                }
+                placeholder="Digite a quantidade"
+                value={this.state.compra.quantity}
+                onChange={e => this.updateField(e)}
+              />
+              <div className="text-danger">{this.state.qtdError}</div>
+            </div>
+          </div>
+
+          <div className="col-12 col-md-6">
+            <div className="form-group">
+              <label>Total</label>
+              <h1>R$ {this.state.compra.price.toFixed(2).replace('.', ',')}</h1>
             </div>
           </div>
         </div>
 
-        <div className="col-12 col-md-6">
-            <div className="form-group">
-                <label>Produto</label>
-                <select
-                className="form-control"
-                name="id_product"
-                value={this.state.compra.id_product}
-                onChange={e => this.updateField(e)}
-                >
-                    {this.state.listProdut.map(user => {
-                        return (
-                            <option key={user.id} value={user.id}>
-                                {user.name}
-                            </option>
-                        );
-                    })}
-                </select>
-            </div>
-        </div>
-
         <hr />
+
+
         <div className="row">
           <div className="col-12 d-flex justify-content-end">
-            <button className="btn btn-primary" onClick={e => this.save(e)}>
-              Salvar
+            <button
+              className="btn btn-primary"
+              onClick={e => this.save(e)}
+              disabled={this.state.loading || this.state.qtdError}
+            >
+              {this.state.loading ? (
+                <i className="fa fa-spinner fa-pulse"></i>
+              ) : (
+                'Salvar'
+              )}
             </button>
 
             <button
               className="btn btn-secondary ml-2"
-              onClick={e => this.clear(e)}
+              onClick={() => window.print()}
+              disabled={this.state.loading}
+            >
+              Imprimir
+            </button>
+            <button
+              className="btn btn-third ml-3"
+              onClick={() => this.clear()}
+              disabled={this.state.loading}
             >
               Cancelar
             </button>
@@ -124,8 +245,19 @@ export default class Compras extends Component {
     );
   }
 
-  load(compra) {
+  async load(compra) {
     this.setState({ compra });
+    const product = await this.state.products.find(
+      p => p.id === compra.id_product
+    );
+    product.quantity += compra.quantity;
+    axios.patch(`${urlProduto}/${compra.id_product}`, {
+      quantity: product.quantity
+    });
+    let products = this.state.products;
+    const position = products.filter(p => p.id === compra.id_product);
+    products[position] = product;
+    this.setState({ products });
   }
 
   remove(compra) {
@@ -153,12 +285,21 @@ export default class Compras extends Component {
     );
   }
 
+  renderNome(id) {
+    try {
+      const [user] = this.state.users.filter(u => u.id === id);
+      return user.name;
+    } catch (e) {
+      return '';
+    }
+  }
+
   renderRows() {
     return this.state.list.map(compra => {
       return (
         <tr key={compra.id}>
           <td>{compra.id}</td>
-          <td>{compra.id_user}</td>
+          <td>{this.renderNome(compra.id_user)}</td>
           <td>{compra.id_product}</td>
           <td>{compra.quantity}</td>
           <td>
