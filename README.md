@@ -1,4 +1,4 @@
-# Restaurante
+# Restaurante.
 
 <p align="center">
   <img alt="Author" src="https://img.shields.io/badge/author-Leandro%20Lara-informational?style=flat-square">
